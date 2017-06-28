@@ -1,4 +1,5 @@
 var RoomModel = require('./Room.js');
+var _ = require('lodash');
 
 // new RoomModel(personCapacity, storageCapacity, id)
 // ID Manually assigned for convenience. Would otherwise come with some persistence layer
@@ -25,21 +26,35 @@ var InnModel = (function () {
     var employees = [];  
     var description = 'A small, magical inn with a prime location in a prominent city run by a friendly innkeeper named Allison.'  
 
+    var ROOM_BASE_PRICE = 10;
+    var STORAGE_BASE_PRICE = 2;
+
     return {
       getAllRooms: function() {
         return rooms;
       },
-      addEmployee: function (employee) {
-        this.employees.push('employee 1');
+      getAvailableRooms: function(bookingRequestParams) {
+        var availableRooms = _.filter(rooms, function(room) {
+          var enoughPersonCapacity = bookingRequestParams.numPeople <= room.personCapacity;
+          var enoughStorageCapcity = bookingRequestParams.numStorage <= room.storageCapacity;
+          var isAvailable = room.isAvailable;
+
+          // show rooms that meet these criteria:
+          return isAvailable && enoughPersonCapacity && enoughStorageCapcity; 
+        });
+
+        return availableRooms;   
       },
-      addRoom: function (employee) {
-        this.rooms.push('Room1');
+      bookRoom: function (roomId) {
+        var targetRoom =  _.find(rooms, { 'roomId' : roomId });
+        var bookingResults = targetRoom.bookRoom();
+        return bookingResults;
       },
-      getEmployees: function () {
-        return this.employees;
+      roomBasePrice: function() {
+        return ROOM_BASE_PRICE;
       },
-      getRooms: function () {
-        return this.rooms;
+      storageBasePrice: function() {
+        return STORAGE_BASE_PRICE;
       }
     }
   }
@@ -57,4 +72,4 @@ var InnModel = (function () {
   };
 })();
 
- module.exports = InnModel;
+module.exports = InnModel;

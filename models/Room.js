@@ -1,13 +1,14 @@
 var RoomModel = (function (personCapacity, storageCapacity, id) {
 
-  var totalPersonCapacity = personCapacity;
-  var totalStorageCapacity = storageCapacity;
-  var isAvailable = 1;
-  var id = id;
+  this.totalPersonCapacity = personCapacity;
+  this.totalStorageCapacity = storageCapacity;
+  this.isAvailable = true;
+  this.id = id;
+  this.booking;;
 
   // TO DO: Apply assertions on required fields. Throw error if fields not filled
 
-  var getAvailabilityStatus = function(){
+  var getAvailabilityStatus = function() {
     return isAvailable;
   }
 
@@ -19,11 +20,26 @@ var RoomModel = (function (personCapacity, storageCapacity, id) {
     return totalStorageCapacity;
   }
 
+  var bookRoom = function(booking) {
+    var bookingResult = {};
+
+    if (booking.isValid) {
+      this.isAvailable = false;
+      bookingResult.sucess = true
+    } else {
+      bookingResult.success = false;
+      bookingResult.error = 'Room Already Booked';
+    }
+
+    return bookingResult;
+  }
+
   return {
-    roomId: id,
-    available: getAvailabilityStatus(),
-    personCapacity: getTotalPersonCapacity(),
-    storageCapacity: getTotalStorageCapacity(),
+    roomId: this.id,
+    isAvailable: this.isAvailable,
+    personCapacity: this.totalPersonCapacity,
+    storageCapacity: this.totalStorageCapacity,
+    bookRoom: bookRoom
   }
  });
 
